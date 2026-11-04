@@ -479,65 +479,72 @@ function buildAnatomy() {
   fresh(svg);
 
   const cos = Math.cos(Math.PI / 6), sin = 0.5;
-  const ox = 210, oy = 300;
-  const P = (x, y, z) => [ox + (x - y) * cos, oy + (x + y) * sin - z];
+  const P = (x, y, z) => [(x - y) * cos, (x + y) * sin - z];
+  const root = el("g", {});
+  svg.appendChild(root);
   const polys = [];
 
-  function box3(x, y, z, w, d, h, stroke) {
-    const p = (a, b, c) => P(a, b, c);
-    polys.push({ depth: x + y + z, pts: [p(x, y, z + h), p(x + w, y, z + h), p(x + w, y + d, z + h), p(x, y + d, z + h)], cls: "iso-hi", stroke: stroke || "navy" });
-    polys.push({ depth: x + y + z + 0.1, pts: [p(x + w, y, z), p(x + w, y + d, z), p(x + w, y + d, z + h), p(x + w, y, z + h)], cls: "iso-mid", stroke: stroke || "navy" });
-    polys.push({ depth: x + y + z + 0.2, pts: [p(x, y + d, z), p(x + w, y + d, z), p(x + w, y + d, z + h), p(x, y + d, z + h)], cls: "iso-lo", stroke: stroke || "navy" });
+  function box3(x, y, z, w, d, h) {
+    const q = (a, b, c) => P(a, b, c);
+    polys.push({ depth: x + y + z, pts: [q(x, y, z + h), q(x + w, y, z + h), q(x + w, y + d, z + h), q(x, y + d, z + h)], cls: "iso-hi" });
+    polys.push({ depth: x + y + z + 0.1, pts: [q(x + w, y, z), q(x + w, y + d, z), q(x + w, y + d, z + h), q(x + w, y, z + h)], cls: "iso-mid" });
+    polys.push({ depth: x + y + z + 0.2, pts: [q(x, y + d, z), q(x + w, y + d, z), q(x + w, y + d, z + h), q(x, y + d, z + h)], cls: "iso-lo" });
   }
 
-  // base and feet
   box3(0, 0, 0, 430, 200, 12);
   [[10, 10], [380, 10], [10, 160], [380, 160]].forEach(([fx, fy]) => box3(fx, fy, -10, 24, 24, 10));
   box3(20, 84, 12, 390, 30, 6);
 
-  // planner chute
   box3(-52, 66, 12, 62, 66, 46);
-  text(svg, P(-52, 66, 80)[0] - 6, P(-52, 66, 80)[1] - 10, "planner", { size: 12, fill: C.muted }, C);
+  const plannerLabel = P(-52, 66, 78);
 
-  // three gates
-  [140, 240, 340].forEach((gx, i) => {
+  [140, 240, 340].forEach((gx) => {
     box3(gx, 52, 12, 14, 94, 96);
     box3(gx - 2, 52, 104, 18, 94, 8);
-    text(svg, P(gx + 7, 150, 14)[0], P(gx + 7, 150, 14)[1] + 22, ["rules", "key", "inspector"][i], { size: 11, fill: C.muted, anchor: "middle" }, C);
   });
 
-  // lock and vault
   box3(370, 60, 12, 34, 34, 26);
   box3(376, 126, 12, 54, 54, 54);
-  text(svg, P(403, 180, 14)[0], P(403, 180, 14)[1] + 22, "vault", { size: 12, fill: C.muted, anchor: "middle" }, C);
 
-  // painter order
   polys.sort((a, b) => a.depth - b.depth);
   polys.forEach((f) => {
-    svg.appendChild(el("polygon", {
+    root.appendChild(el("polygon", {
       points: f.pts.map((q) => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "),
       class: "iso-face " + f.cls,
     }));
   });
 
-  // dial on the vault top
+  text(root, plannerLabel[0] - 10, plannerLabel[1] - 12, "planner", { size: 12, fill: C.muted }, C);
+  ["rules", "key", "inspector"].forEach((name, i) => {
+    const gx = [140, 240, 340][i];
+    const pt = P(gx + 7, 152, 12);
+    text(root, pt[0], pt[1] + 20, name, { size: 11, fill: C.muted, anchor: "middle" }, C);
+  });
+  const vaultPt = P(403, 184, 12);
+  text(root, vaultPt[0], vaultPt[1] + 20, "vault", { size: 12, fill: C.muted, anchor: "middle" }, C);
+
   const c = P(403, 153, 68);
-  svg.appendChild(el("circle", { cx: c[0], cy: c[1], r: 12, class: "iso-line" }));
+  root.appendChild(el("circle", { cx: c[0], cy: c[1], r: 12, class: "iso-line" }));
   const needle = el("line", { x1: c[0], y1: c[1], x2: c[0], y2: c[1] - 9, class: "iso-line" });
   needle.id = "anat-needle";
   needle.style.transformOrigin = c[0] + "px " + c[1] + "px";
-  svg.appendChild(needle);
+  root.appendChild(needle);
 
-  // token
   const tok = el("g", {});
-  const base = [[0, 0], [26, 0], [26, 26], [0, 26]];
-  const cubeTop = base.map(([a, b]) => P(a + 4, b + 92, 26));
-  const cubeR = [[26, 0], [26, 26], [26, 26], [26, 0]].map(([a, b], i) => P(a + 4, b + 92, i < 2 ? 8 : 26));
-  const cubeL = [[0, 26], [26, 26], [26, 26], [0, 26]].map(([a, b], i) => P(a + 4, b + 92, i < 2 ? 8 : 26));
-  tok.appendChild(el("polygon", { points: cubeTop.map((q) => q.join(",")).join(" "), class: "iso-face iso-hi" }));
-  tok.appendChild(el("polygon", { points: cubeR.map((q) => q.join(",")).join(" "), class: "iso-face iso-mid" }));
-  tok.appendChild(el("polygon", { points: cubeL.map((q) => q.join(",")).join(" "), class: "iso-face iso-lo" }));
-  svg.appendChild(tok);
+  const top = [[4, 92], [30, 92], [30, 118], [4, 118]].map(([a, b]) => P(a, b, 26));
+  const right = [[30, 92], [30, 118], [30, 118], [30, 92]].map(([a, b], i) => P(a, b, i < 2 ? 8 : 26));
+  const left = [[4, 118], [30, 118], [30, 118], [4, 118]].map(([a, b], i) => P(a, b, i < 2 ? 8 : 26));
+  tok.appendChild(el("polygon", { points: top.map((q) => q.join(",")).join(" "), class: "iso-face iso-hi" }));
+  tok.appendChild(el("polygon", { points: right.map((q) => q.join(",")).join(" "), class: "iso-face iso-mid" }));
+  tok.appendChild(el("polygon", { points: left.map((q) => q.join(",")).join(" "), class: "iso-face iso-lo" }));
+  root.appendChild(tok);
+
+  const box = root.getBBox();
+  const pad = 34;
+  const scale = Math.min((900 - pad * 2) / box.width, (500 - pad * 2) / box.height, 1.5);
+  const tx = (900 - box.width * scale) / 2 - box.x * scale;
+  const ty = (500 - box.height * scale) / 2 - box.y * scale + 6;
+  root.setAttribute("transform", "translate(" + tx.toFixed(1) + "," + ty.toFixed(1) + ") scale(" + scale.toFixed(3) + ")");
 
   const state = { t: -40 };
   const range = document.getElementById("anat-range");
@@ -545,21 +552,14 @@ function buildAnatomy() {
   const needleEl = document.getElementById("anat-needle");
 
   function place() {
-    const dx = (state.t + 40) * cos;
-    const dy = (state.t + 40) * sin;
-    tok.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
-    const gates = [140, 240, 340];
-    const passed = gates.filter((g) => state.t > g).length;
+    tok.setAttribute("transform", "translate(" + ((state.t + 40) * cos).toFixed(1) + "," + ((state.t + 40) * sin).toFixed(1) + ")");
+    const passed = [140, 240, 340].filter((g) => state.t > g).length;
     const settled = state.t > 360;
-    if (readout) {
-      readout.textContent = settled ? "settled, vault open" : "gate " + passed + " of 3";
-    }
-    if (needleEl) {
-      const angle = settled ? 60 : passed * 24;
-      needleEl.style.transform = "rotate(" + angle + "deg)";
-    }
-    if (range && Math.round(((state.t + 40) / 400) * 100) !== Number(range.value)) {
-      range.value = String(Math.max(0, Math.min(100, Math.round(((state.t + 40) / 400) * 100))));
+    if (readout) readout.textContent = settled ? "settled, vault open" : "gate " + passed + " of 3";
+    if (needleEl) needleEl.style.transform = "rotate(" + (settled ? 58 : passed * 22) + "deg)";
+    if (range) {
+      const v = Math.max(0, Math.min(100, Math.round(((state.t + 40) / 400) * 100)));
+      if (Number(range.value) !== v) range.value = String(v);
     }
   }
 
