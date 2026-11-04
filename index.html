@@ -18,7 +18,7 @@
         <circle cx="12" cy="12" r="3.6" />
       </svg>
     </button>
-    <a class="button" href="https://aswathas.github.io/payment-agent-demo/">Open the demo</a>
+    <a class="button" href="#try">Run the demo</a>
   </div>
 </header>
 
@@ -39,9 +39,9 @@
   <section class="scene scene--pin" data-scene="parts" style="--len: 260vh">
     <div class="scene__stage">
       <div class="scene__copy">
-        <p class="tagline">The basics, in ninety seconds</p>
-        <h2>A payment is four ordinary things</h2>
-        <p class="lead" id="parts-lead">A shopkeeper's book, the money moving, the nod that says yes, and the receipt you keep.</p>
+        <p class="tagline">The primitives</p>
+        <h2>A payment is four primitive parts</h2>
+        <p class="lead" id="parts-lead">A ledger, a state transition, an authorisation, and a receipt. Every rail since the first ledger is a different implementation of the same two questions.</p>
       </div>
       <svg class="scene__art" id="art-parts" viewBox="0 0 1120 380" role="img" aria-label="Four parts of a payment appearing in sequence."></svg>
     </div>
@@ -52,7 +52,7 @@
       <div class="scene__copy">
         <p class="tagline">What already exists</p>
         <h2>Four layers, and a hole between them</h2>
-        <p class="lead">One passes the request, one records your permission, one moves the money, one checks identity.</p>
+        <p class="lead">One layer carries the task, one carries the signed mandate, one settles value, one attests identity. Delivery verification sits in none of them.</p>
       </div>
       <div class="stack" id="stack" role="img" aria-label="Four layers separating as you scroll">
         <div class="stack__plate" data-depth="0"><span>who is asking</span></div>
@@ -109,11 +109,47 @@
     </div>
   </section>
 
+  <section class="scene" data-scene="compare">
+    <div class="scene__copy scene__copy--wide">
+      <p class="tagline">Side by side</p>
+      <h2>Today, and with the brake</h2>
+      <p class="lead">The same request, two paths. One stops and waits for a person. The other runs to a rulebook, takes a signed authorisation, holds the money, and settles in seconds.</p>
+    </div>
+    <figure class="figure">
+      <svg id="art-compare" viewBox="0 0 1120 470" role="img" aria-label="Two lanes comparing today's waiting queue with the automated path through rules, key, escrow and inspector."></svg>
+      <figcaption class="figure__cap">Illustrative timings. What matters is where the wait sits: before the decision, or nowhere.</figcaption>
+    </figure>
+  </section>
+
+  <section class="scene" data-scene="anatomy">
+    <div class="scene__copy scene__copy--wide">
+      <p class="tagline">Anatomy</p>
+      <h2>The rig, in one drawing</h2>
+      <p class="lead">A request enters on the left. It crosses three gates and only then reaches the vault. The dial at the end is the inspector: it opens the vault only when the parcel matches the order.</p>
+    </div>
+
+    <figure class="anat">
+      <div class="anat__card">
+        <div class="anat__bar">
+          <span>Fig 1</span>
+          <span>the enforcement rig</span>
+        </div>
+        <svg id="art-anat" viewBox="0 0 900 520" role="img" aria-label="Isometric rig: planner chute, three gates, a lock, a vault and an inspector dial."></svg>
+        <div class="anat__foot">
+          <label class="anat__hint" for="anat-range">Move a request through the rig</label>
+          <output id="anat-readout" class="anat__readout">idle</output>
+        </div>
+        <input id="anat-range" class="anat__range" type="range" min="0" max="100" value="0" step="1" aria-label="Move a request through the rig" />
+      </div>
+      <figcaption class="figure__cap">Three gates: the rulebook, a separate key, the inspector. Past all three, escrow releases. Fail any one and the token returns untouched.</figcaption>
+    </figure>
+  </section>
+
   <section class="scene" data-scene="try" id="try">
     <div class="scene__copy scene__copy--wide">
       <p class="tagline">The demo, on this page</p>
-      <h2>Try it here, in plain English</h2>
-      <p class="lead">Pick what the assistant is trying to buy. The rulebook answers one line at a time, in words, before anything is paid.</p>
+      <h2>Seven cases, one rulebook</h2>
+      <p class="lead">Each case is an attack class from the threat model. Six checks run in code; the delivery check runs after the money is committed, which is the part a receipt alone cannot do.</p>
     </div>
 
     <div class="sim">
@@ -123,6 +159,8 @@
         <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="2">A shop nobody checked</button>
         <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="3">An instruction from a web page</button>
         <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="4">The same request twice</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="5">A parcel that never arrives</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="6">One request too many</button>
       </div>
 
       <div class="sim__panel" id="sim-panel" role="tabpanel" aria-label="Rule check">
@@ -139,11 +177,16 @@
       </div>
 
       <p class="sim__note" id="sim-note">The rules run in plain code. The assistant cannot argue with them, and it never holds a key.</p>
-    </div>
 
-    <div class="cta">
-      <p class="cta__line">Want the full version, with seven cases and an audit trail?</p>
-      <a class="button button--primary" href="https://aswathas.github.io/payment-agent-demo/">Open the full demo</a>
+      <div class="sim__audit">
+        <div class="sim__audit-head">
+          <h3 class="sim__head">Audit trail</h3>
+          <button id="sim-reset" class="sim__reset" type="button">Clear</button>
+        </div>
+        <ol class="sim__log" id="sim-log">
+          <li class="sim__log-empty">No runs yet. Pick a case above.</li>
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -153,9 +196,9 @@
       <h2>The clever part may suggest. It may never approve.</h2>
       <p class="lead">Limits and delivery checks live in plain code the assistant cannot talk its way out of.</p>
       <div class="links">
-        <a class="link link--big" href="https://aswathas.github.io/payment-agent-demo/">The demo</a>
+        <a class="link link--big" href="#try">Run the seven cases</a>
         <a class="link link--big" href="https://docs.google.com/presentation/d/1_qFz9FgMdQXczctOkDz_dHNm3ODl9e_ORKHRRhjW20Y/edit">The deck</a>
-        <a class="link link--big" href="https://github.com/aswathas/payment-agent-demo">The code</a>
+        <a class="link link--big" href="https://github.com/aswathas/payment-story">The source</a>
       </div>
     </div>
   </section>

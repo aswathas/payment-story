@@ -412,6 +412,185 @@ function buildKernelScene(scene) {
   });
 }
 
+
+/* ------------------------------------------------------------------ comparison */
+
+function buildCompareScene(scene) {
+  const svg = $("#art-compare");
+  if (!svg) return;
+  fresh(svg);
+  const lanes = [
+    { y: 130, title: "today", nodes: ["request", "waits for a person", "approved, maybe", "paid"], color: C.muted },
+    { y: 330, title: "with the brake", nodes: ["request", "rules", "key", "escrow", "inspector", "settled"], color: C.ink },
+  ];
+  const tokens = [];
+
+  lanes.forEach((lane, li) => {
+    text(svg, 30, lane.y - 74, lane.title, { size: 15, fill: li === 0 ? C.muted : C.accent }, C);
+    const n = lane.nodes.length;
+    const w = Math.min(170, 980 / n - 18);
+    const gap = (1010 - n * w) / (n - 1 || 1);
+    lane.nodes.forEach((label, i) => {
+      const x = 40 + i * (w + gap);
+      box(svg, rc, x, lane.y - 34, w, 68, C, { color: i === 1 && li === 0 ? C.accent : C.ink, dash: i === 1 && li === 0 });
+      text(svg, x + 14, lane.y + 5, label, { size: 12.5, fill: i === 1 && li === 0 ? C.accent : C.ink }, C);
+      if (i < n - 1) arrow(svg, rc, x + w + 4, lane.y, x + w + gap - 4, lane.y, C, { color: i === 0 && li === 0 ? C.accent : C.soft });
+    });
+
+    const token = el("g", {});
+    const r = rc.rectangle(0, 0, 56, 26, { stroke: li === 0 ? C.muted : C.ink, strokeWidth: 1.5, roughness: 1 });
+    token.appendChild(r);
+    const t = text(token, 28, 18, "buy", { size: 11, fill: li === 0 ? C.muted : C.ink, anchor: "middle" }, C);
+    token.style.opacity = "1";
+    svg.appendChild(token);
+    tokens.push({ token, lane, w, gap, n });
+  });
+
+  prep(svg);
+
+  const tl = addTl(gsap.timeline({
+    scrollTrigger: { trigger: scene, start: "top 65%", end: "bottom 40%", scrub: 0.8 },
+  }));
+  tl.fromTo(svg.querySelectorAll("path, line, circle, ellipse"), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, stagger: 0.004, ease: "none" }, 0);
+
+  // today: crawls to the queue, then stops
+  const a = tokens[0];
+  gsap.set(a.token, { x: 46, y: a.lane.y - 13 });
+  tl.to(a.token, { x: 46 + (a.w + a.gap) - 10, duration: 1.4, ease: "power1.inOut" }, 0.2);
+  tl.to(a.token, { x: "+=6", duration: 0.5, repeat: 5, yoyo: true, ease: "sine.inOut" }, 1.7);
+  tl.call(() => { a.token.style.opacity = "1"; }, null, 1.7);
+
+  // ours: runs the whole line
+  const b = tokens[1];
+  gsap.set(b.token, { x: 46, y: b.lane.y - 13 });
+  for (let i = 1; i < b.n; i++) {
+    tl.to(b.token, { x: 46 + i * (b.w + b.gap), duration: 0.42, ease: "power2.inOut" }, 0.35 + (i - 1) * 0.42);
+  }
+  tl.call(() => { setStroke(b.token, C.pass); }, null, 0.35 + (b.n - 1) * 0.42);
+
+  text(svg, 40, 430, "one waits for a person. the other waits for a check that takes milliseconds.", { size: 14, fill: C.soft }, C);
+}
+
+/* ------------------------------------------------------------------ anatomy */
+
+function buildAnatomy() {
+  const svg = $("#art-anat");
+  if (!svg) return;
+  fresh(svg);
+
+  const cos = Math.cos(Math.PI / 6), sin = 0.5;
+  const ox = 210, oy = 300;
+  const P = (x, y, z) => [ox + (x - y) * cos, oy + (x + y) * sin - z];
+  const polys = [];
+
+  function box3(x, y, z, w, d, h, stroke) {
+    const p = (a, b, c) => P(a, b, c);
+    polys.push({ depth: x + y + z, pts: [p(x, y, z + h), p(x + w, y, z + h), p(x + w, y + d, z + h), p(x, y + d, z + h)], cls: "iso-hi", stroke: stroke || "navy" });
+    polys.push({ depth: x + y + z + 0.1, pts: [p(x + w, y, z), p(x + w, y + d, z), p(x + w, y + d, z + h), p(x + w, y, z + h)], cls: "iso-mid", stroke: stroke || "navy" });
+    polys.push({ depth: x + y + z + 0.2, pts: [p(x, y + d, z), p(x + w, y + d, z), p(x + w, y + d, z + h), p(x, y + d, z + h)], cls: "iso-lo", stroke: stroke || "navy" });
+  }
+
+  // base and feet
+  box3(0, 0, 0, 430, 200, 12);
+  [[10, 10], [380, 10], [10, 160], [380, 160]].forEach(([fx, fy]) => box3(fx, fy, -10, 24, 24, 10));
+  box3(20, 84, 12, 390, 30, 6);
+
+  // planner chute
+  box3(-52, 66, 12, 62, 66, 46);
+  text(svg, P(-52, 66, 80)[0] - 6, P(-52, 66, 80)[1] - 10, "planner", { size: 12, fill: C.muted }, C);
+
+  // three gates
+  [140, 240, 340].forEach((gx, i) => {
+    box3(gx, 52, 12, 14, 94, 96);
+    box3(gx - 2, 52, 104, 18, 94, 8);
+    text(svg, P(gx + 7, 150, 14)[0], P(gx + 7, 150, 14)[1] + 22, ["rules", "key", "inspector"][i], { size: 11, fill: C.muted, anchor: "middle" }, C);
+  });
+
+  // lock and vault
+  box3(370, 60, 12, 34, 34, 26);
+  box3(376, 126, 12, 54, 54, 54);
+  text(svg, P(403, 180, 14)[0], P(403, 180, 14)[1] + 22, "vault", { size: 12, fill: C.muted, anchor: "middle" }, C);
+
+  // painter order
+  polys.sort((a, b) => a.depth - b.depth);
+  polys.forEach((f) => {
+    svg.appendChild(el("polygon", {
+      points: f.pts.map((q) => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "),
+      class: "iso-face " + f.cls,
+    }));
+  });
+
+  // dial on the vault top
+  const c = P(403, 153, 68);
+  svg.appendChild(el("circle", { cx: c[0], cy: c[1], r: 12, class: "iso-line" }));
+  const needle = el("line", { x1: c[0], y1: c[1], x2: c[0], y2: c[1] - 9, class: "iso-line" });
+  needle.id = "anat-needle";
+  needle.style.transformOrigin = c[0] + "px " + c[1] + "px";
+  svg.appendChild(needle);
+
+  // token
+  const tok = el("g", {});
+  const base = [[0, 0], [26, 0], [26, 26], [0, 26]];
+  const cubeTop = base.map(([a, b]) => P(a + 4, b + 92, 26));
+  const cubeR = [[26, 0], [26, 26], [26, 26], [26, 0]].map(([a, b], i) => P(a + 4, b + 92, i < 2 ? 8 : 26));
+  const cubeL = [[0, 26], [26, 26], [26, 26], [0, 26]].map(([a, b], i) => P(a + 4, b + 92, i < 2 ? 8 : 26));
+  tok.appendChild(el("polygon", { points: cubeTop.map((q) => q.join(",")).join(" "), class: "iso-face iso-hi" }));
+  tok.appendChild(el("polygon", { points: cubeR.map((q) => q.join(",")).join(" "), class: "iso-face iso-mid" }));
+  tok.appendChild(el("polygon", { points: cubeL.map((q) => q.join(",")).join(" "), class: "iso-face iso-lo" }));
+  svg.appendChild(tok);
+
+  const state = { t: -40 };
+  const range = document.getElementById("anat-range");
+  const readout = document.getElementById("anat-readout");
+  const needleEl = document.getElementById("anat-needle");
+
+  function place() {
+    const dx = (state.t + 40) * cos;
+    const dy = (state.t + 40) * sin;
+    tok.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ")");
+    const gates = [140, 240, 340];
+    const passed = gates.filter((g) => state.t > g).length;
+    const settled = state.t > 360;
+    if (readout) {
+      readout.textContent = settled ? "settled, vault open" : "gate " + passed + " of 3";
+    }
+    if (needleEl) {
+      const angle = settled ? 60 : passed * 24;
+      needleEl.style.transform = "rotate(" + angle + "deg)";
+    }
+    if (range && Math.round(((state.t + 40) / 400) * 100) !== Number(range.value)) {
+      range.value = String(Math.max(0, Math.min(100, Math.round(((state.t + 40) / 400) * 100))));
+    }
+  }
+
+  let tween = null;
+  function loop() {
+    if (tween) tween.kill();
+    state.t = -40;
+    place();
+    tween = gsap.to(state, {
+      t: 360, duration: 7, ease: "none", repeat: -1, repeatDelay: 1.4,
+      onUpdate: place,
+      scrollTrigger: { trigger: svg, start: "top 85%", end: "bottom 15%", toggleActions: "play pause resume pause" },
+    });
+  }
+
+  if (range) {
+    range.addEventListener("input", () => {
+      if (tween) { tween.kill(); tween = null; }
+      state.t = -40 + (Number(range.value) / 100) * 400;
+      place();
+    });
+  }
+
+  if (reduced) {
+    state.t = 200;
+    place();
+  } else {
+    loop();
+  }
+}
+
 function setStroke(node, color) {
   node.setAttribute("stroke", color);
   node.querySelectorAll("path, line, circle, ellipse").forEach((n) => n.setAttribute("stroke", color));
@@ -435,6 +614,7 @@ function buildScenes() {
     });
     $$(".sim__case").forEach(() => {});
     $$(".stack__plate").forEach((p, i) => gsap.set(p, { y: i * 96 - 40, rotateX: 8 + i * 3, z: i * 26 }));
+    buildAnatomy();
     const note = $("#stack-note");
     if (note) note.style.opacity = "1";
     return;
@@ -446,6 +626,8 @@ function buildScenes() {
   buildGapScene($('[data-scene="gaps"]'));
   buildMarketScene($('[data-scene="market"]'));
   buildKernelScene($('[data-scene="kernel"]'));
+  buildCompareScene($('[data-scene="compare"]'));
+  buildAnatomy();
 
   $$("[data-scene='demo'] .step").forEach((s, i) => {
     gsap.fromTo(s, { opacity: 0, y: 18 }, {
@@ -560,6 +742,33 @@ const SIM = [
     state: "refuse",
     verdict: "Refused. A captured request cannot be spent twice.",
   },
+  {
+    ask: [["Amount", "$0.030"], ["Shop", "data api"], ["What it buys", "a slice of the pricing dataset"]],
+    rules: [
+      [true, "3 cents, under the limit"],
+      [true, "approved shop"],
+      [true, "first time seen"],
+      [true, "the slice you asked for"],
+      [true, "enough left in the session"],
+      [true, "4 of 12 today"],
+    ],
+    state: "approve",
+    verdict: "Approved, then refunded. The receipt was signed, the payload hash did not match the offer.",
+    delivery: false,
+  },
+  {
+    ask: [["Amount", "$0.045"], ["Shop", "data api"], ["What it buys", "the schema, for a later step"]],
+    rules: [
+      [true, "4.5 cents, under the per-payment limit"],
+      [true, "approved shop"],
+      [true, "first time seen"],
+      [true, "the schema you asked for"],
+      [false, "$0.032 of $0.040 already committed"],
+      [true, "7 of 12 today"],
+    ],
+    state: "refuse",
+    verdict: "Refused. The session had already committed almost all of its budget.",
+  },
 ];
 
 const MARK_PASS = '<svg class="mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5"/></svg>';
@@ -590,6 +799,7 @@ function renderSim(index) {
 
   verdict.dataset.state = "idle";
   verdict.textContent = "Checking…";
+  simPushLog(index, c);
 
   const items = Array.from(rules.querySelectorAll(".sim__rule"));
   if (reduced) {
@@ -618,9 +828,36 @@ function renderSim(index) {
   });
 }
 
+function simPushLog(index, c) {
+  const log = document.getElementById("sim-log");
+  if (!log) return;
+  const empty = log.querySelector(".sim__log-empty");
+  if (empty) empty.remove();
+  const buttons = $$(".sim__case");
+  const name = buttons[index] ? buttons[index].textContent : "case " + (index + 1);
+  const decision = c.delivery === false ? "Refunded" : c.state === "approve" ? "Paid" : "Refused";
+  const state = c.delivery === false ? "approve" : c.state;
+  const time = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const li = document.createElement("li");
+  li.innerHTML =
+    '<span class="t">' + time + "</span>" +
+    '<span class="d" data-state="' + state + '">' + decision + "</span>" +
+    '<span class="c">' + name + "</span>" +
+    '<span class="a">' + (c.ask[0] ? c.ask[0][1] : "") + "</span>";
+  log.prepend(li);
+  while (log.children.length > 8) log.lastElementChild.remove();
+}
+
 function initSim() {
   const cases = $$(".sim__case");
   if (!cases.length) return;
+  const reset = document.getElementById("sim-reset");
+  if (reset) {
+    reset.addEventListener("click", () => {
+      const log = document.getElementById("sim-log");
+      if (log) log.innerHTML = '<li class="sim__log-empty">No runs yet. Pick a case above.</li>';
+    });
+  }
   cases.forEach((btn) => {
     btn.addEventListener("click", () => {
       cases.forEach((b) => {
