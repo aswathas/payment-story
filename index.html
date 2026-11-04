@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your assistant can pay. Should it?</title>
+<meta name="description" content="A plain-language, drawn explanation of software that spends money: how a payment really works, what is already being built, where it breaks, and the brake we are building." />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="nav">
+  <a class="wordmark" href="#top">Kernel</a>
+  <div class="nav__actions">
+    <button id="theme" class="toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="toggle__icon">
+        <path class="toggle__sun" d="M12 4.2v2.1M12 17.7v2.1M4.2 12h2.1M17.7 12h2.1M6.5 6.5l1.5 1.5M16 16l1.5 1.5M17.5 6.5L16 8M8 16l-1.5 1.5" />
+        <circle cx="12" cy="12" r="3.6" />
+      </svg>
+    </button>
+    <a class="button" href="https://aswathas.github.io/payment-agent-demo/">Try the demo</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <p class="hero__kicker">Six short chapters, drawn as you scroll</p>
+    <h1>Your assistant can pay. Should it?</h1>
+    <p class="hero__sentence">Software can spend money faster than you can say yes.</p>
+    <div class="hero__actions">
+      <a class="button button--primary" href="https://aswathas.github.io/payment-agent-demo/">Try the live demo</a>
+      <a class="link" href="#one">Start the story</a>
+    </div>
+    <figure class="figure figure--hero" data-draw="hero" data-parallax="0.18">
+      <svg id="svg-hero" viewBox="0 0 1120 300" role="img" aria-label="A person says yes once, and a chain of programs spends the money afterwards."></svg>
+      <figcaption class="figure__cap">One yes from you, then a queue of programs acting on it. Everything below is about that queue.</figcaption>
+    </figure>
+  </section>
+
+  <section class="chapter" id="one" data-chapter="01">
+    <header class="chapter__head">
+      <p class="chapter__mark">01</p>
+      <h2>What a payment really is</h2>
+      <p class="chapter__lead">Forget cards and coins for a moment. Every payment, since the first ledger, is four simple things.</p>
+    </header>
+    <figure class="figure" data-draw="parts" data-parallax="0.12">
+      <svg id="svg-parts" viewBox="0 0 1120 380" role="img" aria-label="Four parts of a payment: a ledger, a movement, a permission, a receipt."></svg>
+      <figcaption class="figure__cap">A shopkeeper's book, the money moving, the nod that says yes, and the receipt you keep.</figcaption>
+    </figure>
+    <div class="aside-row">
+      <p class="aside"><span class="aside__label">Cash</span> handing it over is the proof</p>
+      <p class="aside"><span class="aside__label">Card</span> your signature plus the bank's promise</p>
+      <p class="aside"><span class="aside__label">Transfer</span> a written instruction</p>
+      <p class="aside"><span class="aside__label">Crypto</span> a digital signature anyone can check</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="two" data-chapter="02">
+    <header class="chapter__head">
+      <p class="chapter__mark">02</p>
+      <h2>Who is already building this</h2>
+      <p class="chapter__lead">Four layers exist today. Each one does its job well, and each one stops before the hard part.</p>
+    </header>
+    <div class="split">
+      <figure class="figure figure--wide" data-draw="layers" data-parallax="0.1">
+        <svg id="svg-layers" viewBox="0 0 720 460" role="img" aria-label="Four stacked layers: who is asking, what they were allowed to do, how money moves, who they are."></svg>
+        <figcaption class="figure__cap">Who is asking. What they were allowed to do. How the money moves. Who they really are.</figcaption>
+      </figure>
+      <div class="prose">
+        <p>One layer passes the request. One records your permission. One moves the money. One checks identity.</p>
+        <p>None of them checks whether the thing you paid for actually arrived. That is not a mistake in any single layer. It is simply nobody's job.</p>
+        <dl class="facts">
+          <div><dt>The unused code</dt><dd>A web standard for "payment required" sat dormant for 28 years before anyone used it properly.</dd></div>
+          <div><dt>Who showed up</dt><dd>Forty organisations, including the big card networks, joined the effort in July 2026.</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <figure class="figure" data-draw="loop" data-parallax="0.08">
+      <svg id="svg-loop" viewBox="0 0 1120 420" role="img" aria-label="The six beats of a machine payment: ask, be told the price, sign, check, work, settle."></svg>
+      <figcaption class="figure__cap">Ask. Hear the price. Sign. Get checked. Work happens. Money moves. Notice what moves after what.</figcaption>
+    </figure>
+  </section>
+
+  <section class="chapter" id="three" data-chapter="03">
+    <header class="chapter__head">
+      <p class="chapter__mark">03</p>
+      <h2>Where it breaks</h2>
+      <p class="chapter__lead">Three failures, and none of them are bugs. They are things nobody promises to do.</p>
+    </header>
+    <div class="cracks">
+      <article class="crack">
+        <figure class="figure figure--small" data-draw="gap1" data-parallax="0.06">
+          <svg id="svg-gap1" viewBox="0 0 340 240" role="img" aria-label="Three programs in a chain, where the last one can no longer see the person who gave permission."></svg>
+        </figure>
+        <h3>Permission gets lost in the chain</h3>
+        <p>Like a game of telephone. The third program only hears the second one. Your yes never reaches it.</p>
+      </article>
+      <article class="crack">
+        <figure class="figure figure--small" data-draw="gap2" data-parallax="0.1">
+          <svg id="svg-gap2" viewBox="0 0 340 240" role="img" aria-label="A receipt for a delivery that arrived empty."></svg>
+        </figure>
+        <h3>Paid, but nothing arrived</h3>
+        <p>You pay for a pizza. The shop marks it delivered. The receipt is real, the pizza is not, and the money is gone.</p>
+      </article>
+      <article class="crack">
+        <figure class="figure figure--small" data-draw="gap3" data-parallax="0.14">
+          <svg id="svg-gap3" viewBox="0 0 340 240" role="img" aria-label="A note slipped under a door that the assistant believes, then signs."></svg>
+        </figure>
+        <h3>The assistant believes a note</h3>
+        <p>Someone slides an instruction under the door. The assistant treats it as yours, signs correctly, and pays the stranger.</p>
+      </article>
+    </div>
+    <p class="pull">A payment going through is not the same as the job being done.</p>
+  </section>
+
+  <section class="chapter" id="four" data-chapter="04">
+    <header class="chapter__head">
+      <p class="chapter__mark">04</p>
+      <h2>How big is this, really</h2>
+      <p class="chapter__lead">Small, real, and growing in one specific place. The headline numbers are forecasts, so we label them as forecasts.</p>
+    </header>
+    <figure class="figure" data-draw="chart" data-parallax="0.1">
+      <svg id="svg-chart" viewBox="0 0 1120 460" role="img" aria-label="Bar chart of reported machine-payment transactions by source, in millions."></svg>
+      <figcaption class="figure__cap">Cumulative machine payments reported by five sources, in millions, November 2026: 196, 199, 138, 110, 75. They disagree because they count differently.</figcaption>
+    </figure>
+    <div class="split split--reverse">
+      <div class="prose">
+        <p>Two things are true at once. Payments for small pieces of data and computing are genuinely happening, every day.</p>
+        <p>And a large share of the early excitement was people paying themselves to make the graphs look good. Independent analysts put it near half.</p>
+        <p class="prose__note">The famous "three to five trillion dollars by 2030" is a projection from a consultancy, not a measurement. We treat it as an opinion.</p>
+      </div>
+      <figure class="figure figure--small" data-draw="split" data-parallax="0.06">
+        <svg id="svg-split" viewBox="0 0 460 320" role="img" aria-label="A bar split roughly in half, showing the estimated share of artificial traffic."></svg>
+        <figcaption class="figure__cap">Estimated share of early payments that were artificial.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="chapter" id="five" data-chapter="05">
+    <header class="chapter__head">
+      <p class="chapter__mark">05</p>
+      <h2>So we built the brake</h2>
+      <p class="chapter__lead">Not another way to pay. A doorman, a locked box, and an inspector, sitting between the software and your money.</p>
+    </header>
+    <figure class="figure" data-draw="modules" data-parallax="0.1">
+      <svg id="svg-modules" viewBox="0 0 1120 520" role="img" aria-label="Nine modules: the planner proposes, the rules check, the signer signs, escrow holds, the inspector verifies."></svg>
+      <figcaption class="figure__cap">The assistant suggests. A rulebook decides. A separate key signs. The money waits in escrow until the delivery is checked.</figcaption>
+    </figure>
+    <div class="cta">
+      <p class="cta__line">Seven attempts, one rulebook. Two of them are attacks, and you can watch them fail.</p>
+      <a class="button button--primary" href="https://aswathas.github.io/payment-agent-demo/">Run the seven cases</a>
+    </div>
+  </section>
+
+  <section class="chapter chapter--close" id="six" data-chapter="06">
+    <header class="chapter__head">
+      <p class="chapter__mark">06</p>
+      <h2>Rules the assistant cannot talk its way out of</h2>
+      <p class="chapter__lead">Spending limits and delivery checks live in plain code. The clever part is allowed to suggest, never to approve.</p>
+    </header>
+    <div class="links">
+      <a class="link link--big" href="https://aswathas.github.io/payment-agent-demo/">The live demo</a>
+      <a class="link link--big" href="https://docs.google.com/presentation/d/1_qFz9FgMdQXczctOkDz_dHNm3ODl9e_ORKHRRhjW20Y/edit">The slide deck</a>
+      <a class="link link--big" href="https://github.com/aswathas/payment-agent-demo">The code</a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p class="foot__line">Drawn in the browser. Figures come from published sources and are cited in the captions. Anything labelled a forecast is one.</p>
+  <p class="foot__meta">Aswath A. S., blockchain department, SRM</p>
+</footer>
+
+<script src="vendor/rough.js"></script>
+<script src="story.js"></script>
+</body>
+</html>
