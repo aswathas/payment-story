@@ -392,7 +392,7 @@ function buildKernelScene(scene) {
   tl.to(good.g, { x: 750, duration: 0.9, ease: "power1.inOut" }, 1.65);
   tl.to(R.ticks[2], { opacity: 1, duration: 0.2 }, 2.2);
   tl.to(good.g, { x: 830, duration: 0.6, ease: "power1.inOut" }, 2.3);
-  tl.call(() => { good.tok.setAttribute("stroke", C.pass); good.label.setAttribute("fill", C.pass); }, null, 2.8);
+  tl.call(() => { setStroke(good.tok, C.pass); good.label.setAttribute("fill", C.pass); }, null, 2.8);
   tl.fromTo(R.outs[0], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.85);
   tl.call(() => { R.outs[0].textContent = "paid, receipt kept"; }, null, 2.85);
 
@@ -400,7 +400,7 @@ function buildKernelScene(scene) {
   const bad = R.tokens[1];
   tl.to(bad.g, { x: 250, duration: 0.9, ease: "power1.inOut" }, 0.5);
   tl.to(bad.g, { x: 236, duration: 0.12, repeat: 3, yoyo: true, ease: "none" }, 1.45);
-  tl.call(() => { bad.tok.setAttribute("stroke", C.accent); bad.label.setAttribute("fill", C.accent); }, null, 1.45);
+  tl.call(() => { setStroke(bad.tok, C.accent); bad.label.setAttribute("fill", C.accent); }, null, 1.45);
   tl.to(bad.g, { x: 60, duration: 0.8, ease: "power2.inOut" }, 1.95);
   tl.fromTo(R.outs[1], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.35);
   tl.call(() => { R.outs[1].textContent = "refused, nothing moved"; }, null, 2.35);
@@ -412,21 +412,31 @@ function buildKernelScene(scene) {
   });
 }
 
+function setStroke(node, color) {
+  node.setAttribute("stroke", color);
+  node.querySelectorAll("path, line, circle, ellipse").forEach((n) => n.setAttribute("stroke", color));
+}
+
 function buildScenes() {
   ScrollTrigger.getAll().forEach((t) => t.kill());
   timelines = [];
 
   if (reduced) {
-    $$(".scene__art").forEach((svg) => {
-      const id = svg.id;
-      const map = { "art-hook": buildHook, "art-parts": buildParts, "art-gap1": buildGap1, "art-gap2": buildGap2, "art-gap3": buildGap3, "art-market": buildMarket, "art-kernel": buildKernel };
-      if (map[id]) {
-        const R = map[id](svg);
-        R.marks.forEach((n) => { n.style.strokeDashoffset = "0"; n.style.opacity = "1"; });
-        if (R.counter) R.counter.textContent = "412";
-      }
+    const map = { "art-hook": buildHook, "art-parts": buildParts, "art-gap1": buildGap1, "art-gap2": buildGap2, "art-gap3": buildGap3, "art-market": buildMarket, "art-kernel": buildKernel };
+    $$(".scene__art, .gap__art").forEach((svg) => {
+      const build = map[svg.id];
+      if (!build) return;
+      const R = build(svg);
+      (R.marks || []).forEach((n) => { n.style.strokeDashoffset = "0"; n.style.opacity = "1"; });
+      if (R.counter) R.counter.textContent = "412";
+      if (R.pulses) R.pulses.forEach((p) => { p.style.opacity = "1"; });
+      if (R.labels) R.labels.forEach((l) => { l.style.opacity = "1"; });
+      if (R.outs) R.outs.forEach((o) => { o.style.opacity = "1"; });
     });
+    $$(".sim__case").forEach(() => {});
     $$(".stack__plate").forEach((p, i) => gsap.set(p, { y: i * 96 - 40, rotateX: 8 + i * 3, z: i * 26 }));
+    const note = $("#stack-note");
+    if (note) note.style.opacity = "1";
     return;
   }
 
@@ -451,7 +461,6 @@ function applyTheme(next, persist) {
   if (btn) {
     const dark = next === "dark";
     btn.setAttribute("aria-pressed", String(dark));
-    btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
   }
   if (persist) { try { localStorage.setItem("kernel-theme", next); } catch (e) { /* ignore */ } }
   buildScenes();
@@ -467,7 +476,6 @@ function initTheme() {
   const btn = $("#theme");
   if (btn) {
     btn.setAttribute("aria-pressed", String(dark));
-    btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
     btn.addEventListener("click", () => {
       const now = document.documentElement.getAttribute("data-theme");
       applyTheme(now === "dark" ? "light" : "dark", true);
@@ -574,7 +582,7 @@ function renderSim(index) {
     return (
       '<li class="sim__rule ' + (ok ? "is-pass" : "is-fail") + '">' +
       (ok ? MARK_PASS : MARK_FAIL) +
-      "<span>" + label + "</span>" +
+      "<span>" + label + '<span class="sr-only"> ' + (ok ? "passes" : "fails") + "</span></span>" +
       '<span class="why">' + why + "</span>" +
       "</li>"
     );
@@ -615,9 +623,21 @@ function initSim() {
   if (!cases.length) return;
   cases.forEach((btn) => {
     btn.addEventListener("click", () => {
-      cases.forEach((b) => b.setAttribute("aria-selected", "false"));
+      cases.forEach((b) => {
+        b.setAttribute("aria-selected", "false");
+        b.setAttribute("tabindex", "-1");
+      });
       btn.setAttribute("aria-selected", "true");
+      btn.setAttribute("tabindex", "0");
       renderSim(Number(btn.dataset.case));
+    });
+    btn.addEventListener("keydown", (ev) => {
+      if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+      ev.preventDefault();
+      const i = cases.indexOf(btn);
+      const next = cases[(i + (ev.key === "ArrowRight" ? 1 : cases.length - 1)) % cases.length];
+      next.focus();
+      next.click();
     });
   });
   renderSim(0);

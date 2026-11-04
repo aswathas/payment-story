@@ -12,7 +12,7 @@
 <header class="nav">
   <a class="wordmark" href="#top">Kernel</a>
   <div class="nav__actions">
-    <button id="theme" class="toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+    <button id="theme" class="toggle" type="button" aria-pressed="false" aria-label="Dark mode">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="toggle__icon">
         <path class="toggle__sun" d="M12 4.2v2.1M12 17.7v2.1M4.2 12h2.1M17.7 12h2.1M6.5 6.5l1.5 1.5M16 16l1.5 1.5M17.5 6.5L16 8M8 16l-1.5 1.5" />
         <circle cx="12" cy="12" r="3.6" />
@@ -54,7 +54,7 @@
         <h2>Four layers, and a hole between them</h2>
         <p class="lead">One passes the request, one records your permission, one moves the money, one checks identity.</p>
       </div>
-      <div class="stack" id="stack" aria-label="Four layers separating as you scroll">
+      <div class="stack" id="stack" role="img" aria-label="Four layers separating as you scroll">
         <div class="stack__plate" data-depth="0"><span>who is asking</span></div>
         <div class="stack__plate" data-depth="1"><span>what they may do</span></div>
         <div class="stack__plate" data-depth="2"><span>the money</span></div>
@@ -118,14 +118,14 @@
 
     <div class="sim">
       <div class="sim__cases" role="tablist" aria-label="What the assistant is trying to buy">
-        <button class="sim__case" type="button" role="tab" aria-selected="true" data-case="0">A weather reading</button>
-        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="1">A bigger plan</button>
-        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="2">A shop nobody checked</button>
-        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="3">An instruction from a web page</button>
-        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="4">The same request twice</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="true" aria-controls="sim-panel" tabindex="0" data-case="0">A weather reading</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="1">A bigger plan</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="2">A shop nobody checked</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="3">An instruction from a web page</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" aria-controls="sim-panel" tabindex="-1" data-case="4">The same request twice</button>
       </div>
 
-      <div class="sim__panel">
+      <div class="sim__panel" id="sim-panel" role="tabpanel" aria-label="Rule check">
         <article class="sim__card">
           <h3 class="sim__head">What it is trying to buy</h3>
           <dl class="sim__rows" id="sim-ask"></dl>
