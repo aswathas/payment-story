@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nobody is awake. The money is moving.</title>
+<meta name="description" content="A moving, hand-drawn story about software that spends money: the problem, the four layers, the three failures, and the brake we built." />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="nav">
+  <a class="wordmark" href="#top">Kernel</a>
+  <div class="nav__actions">
+    <button id="theme" class="toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="toggle__icon">
+        <path class="toggle__sun" d="M12 4.2v2.1M12 17.7v2.1M4.2 12h2.1M17.7 12h2.1M6.5 6.5l1.5 1.5M16 16l1.5 1.5M17.5 6.5L16 8M8 16l-1.5 1.5" />
+        <circle cx="12" cy="12" r="3.6" />
+      </svg>
+    </button>
+    <a class="button" href="https://aswathas.github.io/payment-agent-demo/">Open the demo</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="scene scene--pin" data-scene="hook" style="--len: 300vh">
+    <div class="scene__stage">
+      <div class="scene__copy">
+        <p class="clock" id="clock">2:14 am</p>
+        <h1>Nobody is awake.<br />The money is moving.</h1>
+        <p class="lead" id="hook-lead">By morning, four hundred payments have gone out. Each one small. Each one signed by software acting for you.</p>
+      </div>
+      <svg class="scene__art" id="art-hook" viewBox="0 0 1120 420" role="img" aria-label="Small payments travelling along a wire through the night, counted as they pass."></svg>
+      <p class="scene__hint" aria-hidden="true">scroll</p>
+    </div>
+  </section>
+
+  <section class="scene scene--pin" data-scene="parts" style="--len: 260vh">
+    <div class="scene__stage">
+      <div class="scene__copy">
+        <p class="tagline">The basics, in ninety seconds</p>
+        <h2>A payment is four ordinary things</h2>
+        <p class="lead" id="parts-lead">A shopkeeper's book, the money moving, the nod that says yes, and the receipt you keep.</p>
+      </div>
+      <svg class="scene__art" id="art-parts" viewBox="0 0 1120 380" role="img" aria-label="Four parts of a payment appearing in sequence."></svg>
+    </div>
+  </section>
+
+  <section class="scene scene--pin scene--stack" data-scene="layers" style="--len: 280vh">
+    <div class="scene__stage">
+      <div class="scene__copy">
+        <p class="tagline">What already exists</p>
+        <h2>Four layers, and a hole between them</h2>
+        <p class="lead">One passes the request, one records your permission, one moves the money, one checks identity.</p>
+      </div>
+      <div class="stack" id="stack" aria-label="Four layers separating as you scroll">
+        <div class="stack__plate" data-depth="0"><span>who is asking</span></div>
+        <div class="stack__plate" data-depth="1"><span>what they may do</span></div>
+        <div class="stack__plate" data-depth="2"><span>the money</span></div>
+        <div class="stack__plate" data-depth="3"><span>who they are</span></div>
+        <p class="stack__note" id="stack-note">None of them checks whether the thing arrived.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" data-scene="gaps">
+    <div class="scene__copy scene__copy--wide">
+      <p class="tagline">Where it breaks</p>
+      <h2>Three failures that are nobody's job</h2>
+    </div>
+    <div class="gaps">
+      <article class="gap">
+        <svg class="gap__art" id="art-gap1" viewBox="0 0 360 240" role="img" aria-label="A chain of three programs, the third unable to see the person."></svg>
+        <h3>The telephone game</h3>
+        <p>Your permission is passed along a chain. The third program only hears the second one.</p>
+      </article>
+      <article class="gap">
+        <svg class="gap__art" id="art-gap2" viewBox="0 0 360 240" role="img" aria-label="A receipt for a parcel that arrived empty."></svg>
+        <h3>Paid, and nothing arrived</h3>
+        <p>The shop marks it delivered. The receipt is real, the parcel is not, and the money cannot be reversed.</p>
+      </article>
+      <article class="gap">
+        <svg class="gap__art" id="art-gap3" viewBox="0 0 360 240" role="img" aria-label="A note slipped under a door that the assistant obeys."></svg>
+        <h3>The assistant believes the wrong note</h3>
+        <p>A web page tells it to do something else. It obeys, signs correctly, and pays a stranger.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="scene" data-scene="market">
+    <div class="scene__copy scene__copy--wide">
+      <p class="tagline">The honest numbers</p>
+      <h2>Small, real, and smaller than the headlines</h2>
+      <p class="lead">Machine payments are real where they are metered. The grand figures are forecasts, and roughly half of the early traffic was people paying themselves.</p>
+    </div>
+    <svg class="scene__art" id="art-market" viewBox="0 0 1120 420" role="img" aria-label="Bars growing to show reported machine payments by source."></svg>
+    <p class="figure__cap">Cumulative machine payments reported by five sources, in millions, November 2026. They disagree because they count differently.</p>
+  </section>
+
+  <section class="scene scene--pin" data-scene="kernel" style="--len: 320vh">
+    <div class="scene__stage">
+      <div class="scene__copy">
+        <p class="tagline">What we built</p>
+        <h2>The brake, not the engine</h2>
+        <p class="lead" id="kernel-lead">A rulebook, a separate key, and an inspector sit between the assistant and your money.</p>
+      </div>
+      <svg class="scene__art" id="art-kernel" viewBox="0 0 1120 440" role="img" aria-label="A request travelling through rules, a key and an inspector, then into escrow."></svg>
+    </div>
+  </section>
+
+  <section class="scene" data-scene="try" id="try">
+    <div class="scene__copy scene__copy--wide">
+      <p class="tagline">The demo, on this page</p>
+      <h2>Try it here, in plain English</h2>
+      <p class="lead">Pick what the assistant is trying to buy. The rulebook answers one line at a time, in words, before anything is paid.</p>
+    </div>
+
+    <div class="sim">
+      <div class="sim__cases" role="tablist" aria-label="What the assistant is trying to buy">
+        <button class="sim__case" type="button" role="tab" aria-selected="true" data-case="0">A weather reading</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="1">A bigger plan</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="2">A shop nobody checked</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="3">An instruction from a web page</button>
+        <button class="sim__case" type="button" role="tab" aria-selected="false" data-case="4">The same request twice</button>
+      </div>
+
+      <div class="sim__panel">
+        <article class="sim__card">
+          <h3 class="sim__head">What it is trying to buy</h3>
+          <dl class="sim__rows" id="sim-ask"></dl>
+        </article>
+
+        <article class="sim__card">
+          <h3 class="sim__head">What the rulebook asks</h3>
+          <ul class="sim__rules" id="sim-rules"></ul>
+          <p class="sim__verdict" id="sim-verdict" aria-live="polite" data-state="idle">Nothing has been paid yet.</p>
+        </article>
+      </div>
+
+      <p class="sim__note" id="sim-note">The rules run in plain code. The assistant cannot argue with them, and it never holds a key.</p>
+    </div>
+
+    <div class="cta">
+      <p class="cta__line">Want the full version, with seven cases and an audit trail?</p>
+      <a class="button button--primary" href="https://aswathas.github.io/payment-agent-demo/">Open the full demo</a>
+    </div>
+  </section>
+
+  <section class="scene scene--close" data-scene="close">
+    <div class="scene__copy">
+      <p class="tagline">The whole idea</p>
+      <h2>The clever part may suggest. It may never approve.</h2>
+      <p class="lead">Limits and delivery checks live in plain code the assistant cannot talk its way out of.</p>
+      <div class="links">
+        <a class="link link--big" href="https://aswathas.github.io/payment-agent-demo/">The demo</a>
+        <a class="link link--big" href="https://docs.google.com/presentation/d/1_qFz9FgMdQXczctOkDz_dHNm3ODl9e_ORKHRRhjW20Y/edit">The deck</a>
+        <a class="link link--big" href="https://github.com/aswathas/payment-agent-demo">The code</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p class="foot__line">Drawn in the browser. Figures are cited in the captions; anything labelled a forecast is one.</p>
+  <p class="foot__meta">Aswath A. S., blockchain department, SRM</p>
+</footer>
+
+<script src="vendor/rough.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="story.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+.agents/
+node_modules/
+audit-prompt.txt
+.DS_Store
